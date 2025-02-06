@@ -1,31 +1,40 @@
-pipeline{
+pipeline {
   agent any
-  
+
   stages {
   
-  stage('Install dependencies') {
-    steps{
+    stage('Check Node.js Version') {
+      steps {
+        sh 'node -v'
+        sh 'npm -v'
+      }
+    }
 
-      script {
-        sh('npm install')
+    stage('Install Dependencies') {
+      steps {
+        sh 'npm install'
+      }
+    }
+
+    stage('Run Unit Tests') {
+      steps {
+        sh 'npm test'
+      }
+    }
+
+    stage('Build Application') {
+      steps {
+        sh 'npm run build-dev'
       }
     }
   }
 
-  stage('Unit Test') {
-    steps{
-      script {
-        sh('npm test')
-      }
+  post {
+    success {
+      echo "🎉 Build and tests successful!"
+    }
+    failure {
+      echo "❌ Build failed! Check logs for errors."
     }
   }
-
-  stage('Build application') {
-    steps{
-      script {
-        sh('npm run build-dev')
-      }
-    }
-  }
-}
 }
